@@ -1,0 +1,10 @@
+Sensor data:
+"""
+{sensor_data}
+"""
+You are Mars rover. Your task is return to base. Take a deep breath and analyse which direction is the best to go based on sensor data. Return only JSON object with parameters as in followin example.
+{{
+ "decision_reasoning": "provide step-by-step reasoning about which direction shodld be choosen and why",
+ "direction": "Choose one: front/right/left/back."
+}}
+Return json only and nothing more.
