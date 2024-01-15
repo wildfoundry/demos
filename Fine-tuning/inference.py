@@ -5,7 +5,7 @@ from peft import PeftModel, PeftConfig
 from transformers import AutoModelForCausalLM
 
 
-model_name = "mistral_instruct_generation/checkpoint-125"
+model_name = "mistral_instruct_generation/checkpoint-100"
 
 #config = PeftConfig.from_pretrained("Grigorij/mistral_instruct_generation")
 config = PeftConfig.from_pretrained(model_name)
@@ -17,7 +17,8 @@ bnb_config = BitsAndBytesConfig(
 )
 
 model_id = "HuggingFaceH4/zephyr-7b-beta"
-# base_model = "mistralai/Mistral-7B-Instruct-v0.2"
+#model_id = "mistralai/Mistral-7B-Instruct-v0.2"
+
 model = AutoModelForCausalLM.from_pretrained(
     model_id, quantization_config=bnb_config, device_map='auto', use_cache=False)
 model = PeftModel.from_pretrained(model, model_name)
@@ -29,15 +30,30 @@ tokenizer = AutoTokenizer.from_pretrained(
 tokenizer.pad_token = tokenizer.eos_token
 tokenizer.padding_side = "right"
 
+closing_curly_bracket_token_nr = 14491
+
 def generate_response(prompt, model):
-  encoded_input = tokenizer(prompt,  return_tensors="pt", add_special_tokens=True)
-  model_inputs = encoded_input.to('cuda')
-  generated_ids = model.generate(**model_inputs, max_new_tokens=1000, do_sample=True, pad_token_id=tokenizer.eos_token_id) #, eos_token_id=14491
+    encoded_input = tokenizer(prompt,  return_tensors="pt", add_special_tokens=True)
+    model_inputs = encoded_input.to('cuda')
+    generated_ids = model.generate(
+        **model_inputs,
+        max_new_tokens=200,
+        do_sample=True,
+        pad_token_id=tokenizer.eos_token_id,
+        #eos_token_id=tokenizer.eos_token_id,
+        eos_token_id=closing_curly_bracket_token_nr,    # cutting out response on the particular token. Not a good practice.
+    )
 
-  decoded_output = tokenizer.batch_decode(generated_ids)
+    decoded_output = tokenizer.batch_decode(generated_ids)
 
-  return decoded_output[0]
+    return decoded_output[0]
 
 
-response = generate_response("<|system|>\nAct as Mars rover</s>\n<|user|>\nFront: low rocks, mineral, Right: crater, Left: clear space, Rear: clear space, container: empty, base: rear-left</s>\n<|assistant|>\n", model)
+prompt_chat_template = [{
+    "role": "user",
+    "content": "Front: dust clouds, Right: crater, Left: clear space, Rear: clear space, container: empty, base: front-left"
+}]
+prompt = tokenizer.apply_chat_template(prompt_chat_template, tokenize=False, add_generation_prompt=True)
+
+response = generate_response(prompt, model)
 print(response)

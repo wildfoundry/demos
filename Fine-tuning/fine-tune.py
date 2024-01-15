@@ -6,8 +6,6 @@ from datasets import load_dataset
 import wandb
 
 
-wandb.init(project="fine-tune")
-
 # load datasets
 train_dataset = load_dataset('json', data_files='finetuning_data.jsonl', split='train')
 eval_dataset = load_dataset('json', data_files='finetuning_validation.jsonl', split='train')
@@ -15,6 +13,11 @@ eval_dataset = load_dataset('json', data_files='finetuning_validation.jsonl', sp
 # load and quantize model
 model_id = "HuggingFaceH4/zephyr-7b-beta"
 #model_id = "mistralai/Mistral-7B-Instruct-v0.2"
+#model_id = "cognitivecomputations/dolphin-2.6-mistral-7b"
+
+wandb_config = {"model": model_id}
+wandb.init(project="fine-tune", config=wandb_config)
+
 bnb_config = BitsAndBytesConfig(
     load_in_4bit=True,
     bnb_4bit_use_double_quant=True,
@@ -55,25 +58,6 @@ def create_prompt_mistral(examples):
         input_text = examples["input"][i]
         response = examples["output"][i]
 
-        full_prompt = "<s>"
-        full_prompt += "### Instruction:"
-        full_prompt += "\n\n### Input:"
-        full_prompt += "\n" + input_text
-        full_prompt += "\n\n### Response:"
-        full_prompt += "\n" + response
-        full_prompt += "</s>"
-
-        output_text.append(full_prompt)
-
-    return output_text
-
-
-def create_my_prompt_mistral(examples):
-    output_text = []
-    for i in range(len(examples["input"])):
-        input_text = examples["input"][i]
-        response = examples["output"][i]
-
         full_prompt = "[INST]" + input_text + "[/INST]\n" + response
         print(full_prompt)
         output_text.append(full_prompt)
@@ -98,20 +82,44 @@ def create_prompt_zephyr(examples):
 
     return output_text
 
+def create_prompt_dolphin(examples):
+    output_text = []
+    for i in range(len(examples["input"])):
+        input_text = examples["input"][i]
+        response = examples["output"][i]
+
+        prompt = f"<|im_start|>user\n{input_text}<|im_end|>\n<|im_start|>assistant\n{response}<|im_end|>"
+
+        output_text.append(prompt)
+
+    return output_text
+
+
+def create_prompt_universal(examples):
+    output_text = []
+    for i in range(len(examples["input"])):
+        input_text = examples["input"][i]
+        response = examples["output"][i]
+
+        chat_template = [{"role": "user", "content": input_text}, {"role": "assistant", "content": response}]
+        prompt = tokenizer.apply_chat_template(chat_template, tokenize=False)
+
+        output_text.append(prompt)
+
+    return output_text
+
+
 max_seq_length = 256
 
 args = TrainingArguments(
-    output_dir="mistral_instruct_generation",
-    #output_dir="zephyr_instruct_generation",
-    #num_train_epochs=5,
-    max_steps=150, # comment out this line if you want to train in epochs
+    output_dir="zephyr_instruct_generation",
+    max_steps=175,
     per_device_train_batch_size=4,
     warmup_steps=0.03,
     logging_steps=10,
     save_strategy="epoch",
-    #evaluation_strategy="epoch",
     evaluation_strategy="steps",
-    eval_steps=10, # comment out this line if you want to evaluate at the end of each epoch
+    eval_steps=10,
     learning_rate=1e-4,
     bf16=True,
     lr_scheduler_type='constant',
@@ -124,7 +132,7 @@ trainer = SFTTrainer(
   peft_config=peft_config,
   max_seq_length=max_seq_length,
   tokenizer=tokenizer,
-  formatting_func=create_prompt_zephyr,
+  formatting_func=create_prompt_universal,
   args=args,
   train_dataset=train_dataset,
   eval_dataset=eval_dataset,
