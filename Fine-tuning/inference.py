@@ -5,7 +5,7 @@ from peft import PeftModel, PeftConfig
 from transformers import AutoModelForCausalLM
 
 
-model_name = "mistral_instruct_generation/checkpoint-100"
+model_name = "zephyr_instruct_generation/checkpoint-100"
 
 #config = PeftConfig.from_pretrained("Grigorij/mistral_instruct_generation")
 config = PeftConfig.from_pretrained(model_name)
@@ -31,6 +31,7 @@ tokenizer.pad_token = tokenizer.eos_token
 tokenizer.padding_side = "right"
 
 closing_curly_bracket_token_nr = 14491
+
 
 def generate_response(prompt, model):
     encoded_input = tokenizer(prompt,  return_tensors="pt", add_special_tokens=True)

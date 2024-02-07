@@ -26,7 +26,8 @@ bnb_config = BitsAndBytesConfig(
 )
 
 model = AutoModelForCausalLM.from_pretrained(
-    model_id, quantization_config=bnb_config, device_map='auto', use_cache=False)
+    model_id, quantization_config=bnb_config, device_map='auto', use_cache=False
+)
 
 # set up tokenizer
 tokenizer = AutoTokenizer.from_pretrained(
@@ -36,7 +37,6 @@ tokenizer = AutoTokenizer.from_pretrained(
 )
 tokenizer.pad_token = tokenizer.eos_token
 tokenizer.padding_side = "right"
-
 
 # Lora (fine-tuning) Config
 peft_config = LoraConfig(
@@ -52,49 +52,6 @@ model = get_peft_model(model, peft_config)
 
 
 # constructs prompt the way model understands
-def create_prompt_mistral(examples):
-    output_text = []
-    for i in range(len(examples["input"])):
-        input_text = examples["input"][i]
-        response = examples["output"][i]
-
-        full_prompt = "[INST]" + input_text + "[/INST]\n" + response
-        print(full_prompt)
-        output_text.append(full_prompt)
-
-    return output_text
-
-
-def create_prompt_zephyr(examples):
-    output_text = []
-    for i in range(len(examples["input"])):
-        input_text = examples["input"][i]
-        response = examples["output"][i]
-
-        full_prompt = "<|system|>\n"
-        full_prompt += "Act as Mars rover</s>\n"
-        full_prompt += "<|user|>\n"
-        full_prompt += input_text + "</s>\n"
-        full_prompt += "<|assistant|>\n"
-        full_prompt += response
-
-        output_text.append(full_prompt)
-
-    return output_text
-
-def create_prompt_dolphin(examples):
-    output_text = []
-    for i in range(len(examples["input"])):
-        input_text = examples["input"][i]
-        response = examples["output"][i]
-
-        prompt = f"<|im_start|>user\n{input_text}<|im_end|>\n<|im_start|>assistant\n{response}<|im_end|>"
-
-        output_text.append(prompt)
-
-    return output_text
-
-
 def create_prompt_universal(examples):
     output_text = []
     for i in range(len(examples["input"])):
@@ -122,9 +79,9 @@ args = TrainingArguments(
     eval_steps=10,
     learning_rate=1e-4,
     bf16=True,
-    lr_scheduler_type='constant',
+    lr_scheduler_type="constant",
     report_to="wandb",
-    push_to_hub=True,
+    #push_to_hub=True,
 )
 
 trainer = SFTTrainer(
@@ -139,10 +96,3 @@ trainer = SFTTrainer(
 )
 
 trainer.train()
-
-#trainer.save_model("mistral_finetuned")
-
-# push to hugging face
-#trainer.push_to_hub("Grigorij/Mistral-Mars-Rover")
-# Testing
-#merged_model = model.merge_and_unload()
