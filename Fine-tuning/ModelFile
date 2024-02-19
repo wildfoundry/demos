@@ -1,0 +1,10 @@
+FROM ./zephyr_mars_rover.Q4_K_M.gguf
+
+TEMPLATE """<|user|>
+{{ .Prompt }}
+<|assistant|>
+"""
+
+PARAMETER num_ctx 200
+
+PARAMETER stop "\n"

@@ -17,6 +17,6 @@ def generate_data():
     data.append(f"container: {random.choice(container_statuses)}")
     data.append(f"base: {random.choice(base_directions)}")
 
-    return json.dumps({"input_data": ', '.join(data)})
+    return json.dumps({"input": ', '.join(data)})
 
 print('\n'.join(generate_data() for _ in range(10)))

@@ -70,7 +70,7 @@ max_seq_length = 256
 
 args = TrainingArguments(
     output_dir="zephyr_instruct_generation",
-    max_steps=175,
+    max_steps=100,
     per_device_train_batch_size=4,
     warmup_steps=0.03,
     logging_steps=10,
@@ -96,3 +96,4 @@ trainer = SFTTrainer(
 )
 
 trainer.train()
+model.save_pretrained("marsrover_zephyr_lora")
