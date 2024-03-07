@@ -4,7 +4,3 @@ TEMPLATE """<|user|>
 {{ .Prompt }}
 <|assistant|>
 """
-
-PARAMETER num_ctx 200
-
-PARAMETER stop "\n"

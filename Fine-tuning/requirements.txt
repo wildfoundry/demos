@@ -8,3 +8,5 @@ scipy
 trl
 wandb
 huggingface-hub
+langchain
+langchain-community
