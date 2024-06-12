@@ -23,7 +23,7 @@ def move(direction):
 callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
 
 llm = Ollama(
-    model="openchat",
+    model="marjo/openchat:3.6-8b-20240522-Q4_K_M",
     temperature=0,
     callbacks=callback_manager,
 )
@@ -41,6 +41,6 @@ if __name__ == '__main__':
     print("Loading LLM...")
     chain = prompt | llm | XMLOutputParser()
     result = chain.invoke({"right_object": right_object, "left_object": left_object})
-    direction = result["response"][1]["decision"]
+    direction = result["response"][1]["lesser_harm_decision"]
 
     move(direction)
