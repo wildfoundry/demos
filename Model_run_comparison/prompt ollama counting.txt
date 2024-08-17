@@ -1,0 +1,4 @@
+curl http://localhost:11434/api/generate -d '{
+  "model": "openchat",
+  "prompt": "Sensor data: Front: unacessible rocks, Right: clear space, Left: deep crater, Rear: dust storm. Act as Mars rover. Your task is to explore surface. Take a deep breath and analyse which direction is the best to go based on sensor data. Return only JSON object with parameters as in following example. {{decision_reasoning: provide step-by-step reasoning about which direction shodld be choosen and why, direction: Choose one: front/right/left/back.}}"
+}'

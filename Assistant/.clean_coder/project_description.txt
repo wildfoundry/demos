@@ -1,0 +1,3 @@
+Assistant that scraps hacker news and chooses that related to user preferable topics. preferable topics should be variable user can change. Use LLM and Langchain to summarize preferable topics. Assistant should output summary or user preferable topics.
+
+As we working on MVP, avoid creating tests and documentation. Concentrate on functionality only.

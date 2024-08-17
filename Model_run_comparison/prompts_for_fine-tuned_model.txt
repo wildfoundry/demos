@@ -1,0 +1,5 @@
+{"input": "Front: dust clouds, Right: high rocks, Left: high rocks, Rear: dust clouds, container: empty, base: rear"}
+{"input": "Front: clear space, Right: clear space, Left: clear space, Rear: crater, container: full, base: right"}
+{"input": "Front: low rocks, Right: dust clouds, Left: dust clouds, Rear: crater, container: full, base: rear-left"}
+{"input": "Front: clear space, Right: dust clouds, Left: clear space, mineral, Rear: crater, container: full, base: front-left"}
+{"input": "Front: high rocks, Right: clear space, Left: high rocks, Rear: crater, container: full, base: rear-right"}

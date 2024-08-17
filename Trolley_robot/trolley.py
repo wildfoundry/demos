@@ -11,12 +11,12 @@ def move(direction):
     print(f"Moving {direction}...")
     motor = Motor("MOTOR1", 1)
     if direction == "Left":
-        motor.forward(0.5)
-        time.sleep(5)
+        motor.forward(0.6)
+        time.sleep(4)
         motor.stop()
     elif direction == "Right":
-        motor.reverse(0.5)
-        time.sleep(5)
+        motor.reverse(0.6)
+        time.sleep(4)
         motor.stop()
 
 
@@ -41,6 +41,6 @@ if __name__ == '__main__':
     print("Loading LLM...")
     chain = prompt | llm | XMLOutputParser()
     result = chain.invoke({"right_object": right_object, "left_object": left_object})
-    direction = result["response"][1]["lesser_harm_decision"]
+    direction = result["response"][3]["decision"]
 
     move(direction)

@@ -1,0 +1,16 @@
+4b:
+cold: 5:25
+hot: 2:06, 3:20, 3:07, med_hot: 2:51
+
+5:
+cold: 2:17
+hot: 1:00, 0:58, 0:41, med_hot: 0:53
+
+"total_duration":211175053474,"load_duration":59801849782,"prompt_eval_count":129,"prompt_eval_duration":78071651000,"eval_count":107,"eval_duration":73300271000}
+
+5 + AI module:
+"total_duration":221202968340,"load_duration":58533755435,"prompt_eval_count":129,"prompt_eval_duration":77728646000,"eval_count":129,"eval_duration":84939568000}
+
+Xavier:
+cold: 2:26
+hot: 1:17, 0:56, 1:04, med_hot: 1:06
